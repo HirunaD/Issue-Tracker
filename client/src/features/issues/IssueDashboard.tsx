@@ -1,8 +1,7 @@
+import { CreateIssueModal } from "./CreateIssueModal";
 import { useEffect, useState } from "react";
-// import { Input } from "@/components/ui/input";
 import { IssueTable } from "./IssueTable";
 import { useIssueStore } from "./useIssueStore";
-// import { useDebounce } from "@/hooks/useDebounce";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -22,6 +21,7 @@ export const IssueDashboard = () => {
     <div className="p-6 space-y-6">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Issue Management</h1>
+        <CreateIssueModal />
 
         <div className="relative max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

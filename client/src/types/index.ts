@@ -16,3 +16,12 @@ export interface IssueStats {
   _id: Status;
   count: number;
 }
+
+export interface ApiErrorResponse {
+  response?: {
+    data?: {
+      msg?: string;
+      message?: string;
+    };
+  };
+}

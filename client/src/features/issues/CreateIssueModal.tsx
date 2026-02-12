@@ -1,33 +1,56 @@
-import React, { useState } from 'react';
-import { 
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter 
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { useIssueStore } from "./useIssueStore";
 import { PlusCircle } from "lucide-react";
+import { toast } from "react-toastify";
+import type { Priority, Status } from "@/types";
+import { getErrorMessage } from "@/lib/utils";
 
 export const CreateIssueModal = () => {
   const [open, setOpen] = useState(false);
   const { createIssue } = useIssueStore();
-  
+
   // Form State
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'Medium',
-    status: 'Open'
+    title: "",
+    description: "",
+    priority: "Medium",
+    status: "Open",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createIssue(formData); 
-    setOpen(false); 
-    setFormData({ title: '', description: '', priority: 'Medium', status: 'Open' });
+    try {
+      await createIssue({
+        ...formData,
+        status: formData.status as Status,
+        priority: formData.priority as Priority
+      });
+      toast.success("Issue created successfully!");
+      setOpen(false);
+      // Reset form...
+    } catch (err) {
+      const message = getErrorMessage(err);
+      toast.error(message);
+      console.error("Error creating issue:", err);
+    }
   };
 
   return (
@@ -44,28 +67,34 @@ export const CreateIssueModal = () => {
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Title</label>
-            <Input 
-              required 
-              value={formData.title} 
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              placeholder="e.g., Fix login button" 
+            <Input
+              required
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              placeholder="e.g., Fix login button"
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Description</label>
-            <Textarea 
-              required 
+            <Textarea
+              required
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              placeholder="Describe the issue in detail..." 
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              placeholder="Describe the issue in detail..."
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Priority</label>
-              <Select 
-                value={formData.priority} 
-                onValueChange={(val) => setFormData({...formData, priority: val})}
+              <Select
+                value={formData.priority}
+                onValueChange={(val) =>
+                  setFormData({ ...formData, priority: val })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Priority" />
@@ -79,7 +108,9 @@ export const CreateIssueModal = () => {
             </div>
           </div>
           <DialogFooter className="pt-4">
-            <Button type="submit" className="w-full">Create Issue</Button>
+            <Button type="submit" className="w-full">
+              Create Issue
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

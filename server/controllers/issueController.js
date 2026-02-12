@@ -2,7 +2,9 @@ import Issue from "../models/Issue.js";
 
 export async function getIssues(req, res) {
   try {
-    const { search, priority, status, page = 1, limit = 10 } = req.query;
+    const { search, priority, status } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
     let query = {};
     if (search) query.title = { $regex: search, $options: "i" };
@@ -10,7 +12,7 @@ export async function getIssues(req, res) {
     if (status) query.status = status;
 
     const issues = await Issue.find(query)
-      .limit(limit * 1)
+      .limit(limit)
       .skip((page - 1) * limit)
       .sort({ createdAt: -1 });
 

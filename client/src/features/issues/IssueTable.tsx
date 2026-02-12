@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { Issue, Priority, Status } from "@/types";
-import { AlertCircle, ArrowUpCircle, MoreHorizontal } from "lucide-react";
+import { AlertCircle, ArrowUpCircle } from "lucide-react";
+import { IssueActions } from "./IssueActions";
 
 const getPriorityIcon = (priority: Priority) => {
   switch (priority) {
@@ -59,9 +60,7 @@ export const IssueTable = ({ issues }: { issues: Issue[] }) => {
                 {new Date(issue.createdAt).toLocaleDateString()}
               </TableCell>
               <TableCell className="text-right">
-                <button className="p-2 hover:bg-slate-100 rounded-full">
-                  <MoreHorizontal className="h-4 w-4 text-slate-500" />
-                </button>
+                <IssueActions issue={issue} />
               </TableCell>
             </TableRow>
           ))}

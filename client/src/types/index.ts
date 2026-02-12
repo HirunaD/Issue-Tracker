@@ -25,3 +25,21 @@ export interface ApiErrorResponse {
     };
   };
 }
+
+export interface IssueState {
+  issues: Issue[];
+  stats: IssueStats[];
+  loading: boolean;
+  totalPages: number;
+  currentPage: number;
+
+  fetchIssues: (params: {
+    search?: string;
+    status?: string;
+    priority?: string;
+    page?: number;
+  }) => Promise<void>;
+  createIssue: (issueData: Partial<Issue>) => Promise<void>;
+  updateIssue: (id: string, updates: Partial<Issue>) => Promise<void>;
+  deleteIssue: (id: string) => Promise<void>;
+}

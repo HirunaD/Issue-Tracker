@@ -5,6 +5,7 @@ import { useIssueStore } from "./useIssueStore";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
+import { LogoutButton } from "@/components/layout/UserNav";
 
 export const IssueDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,6 +23,7 @@ export const IssueDashboard = () => {
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Issue Management</h1>
         <CreateIssueModal />
+        <LogoutButton />
 
         <div className="relative max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

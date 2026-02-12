@@ -22,17 +22,28 @@ interface QuickStatusModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const statusConfig: Record<"Resolved" | "Closed", { icon: React.ElementType; color: string; title: string; description: string }> = {
+const statusConfig: Record<"Resolved" | "Closed", { 
+  icon: React.ElementType; 
+  iconBg: string;
+  iconColor: string;
+  buttonColor: string;
+  title: string; 
+  description: string 
+}> = {
   Resolved: {
     icon: CheckCircle2,
-    color: "text-green-600",
-    title: "Mark as Resolved?",
-    description: "This will mark the issue as resolved, indicating that the problem has been fixed.",
+    iconBg: "bg-emerald-500/10",
+    iconColor: "text-emerald-600 dark:text-emerald-400",
+    buttonColor: "bg-emerald-600 hover:bg-emerald-700",
+    title: "Mark as Resolved",
+    description: "This will mark the issue as resolved, indicating that the problem has been fixed and verified.",
   },
   Closed: {
     icon: XCircle,
-    color: "text-gray-600",
-    title: "Close this Issue?",
+    iconBg: "bg-slate-500/10",
+    iconColor: "text-slate-600 dark:text-slate-400",
+    buttonColor: "bg-slate-600 hover:bg-slate-700",
+    title: "Close Issue",
     description: "This will close the issue. Closed issues are typically ones that won't be addressed further.",
   },
 };
@@ -66,20 +77,26 @@ export const QuickStatusModal = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <div className={`flex items-center gap-2 ${config.color} mb-2`}>
-            <Icon className="h-5 w-5" />
-            <AlertDialogTitle>{config.title}</AlertDialogTitle>
+          <div className="flex items-center gap-3 mb-2">
+            <div className={`p-2.5 ${config.iconBg} rounded-xl`}>
+              <Icon className={`h-5 w-5 ${config.iconColor}`} />
+            </div>
+            <div>
+              <AlertDialogTitle className="text-xl">{config.title}</AlertDialogTitle>
+            </div>
           </div>
-          <AlertDialogDescription>{config.description}</AlertDialogDescription>
+          <AlertDialogDescription className="text-base">
+            {config.description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="mt-4">
           <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
               handleUpdate();
             }}
-            className={targetStatus === "Resolved" ? "bg-green-600 hover:bg-green-700" : "bg-gray-600 hover:bg-gray-700"}
+            className={config.buttonColor}
             disabled={isUpdating}
           >
             {isUpdating ? (
@@ -88,7 +105,10 @@ export const QuickStatusModal = ({
                 Updating...
               </>
             ) : (
-              `Mark as ${targetStatus}`
+              <>
+                <Icon className="mr-2 h-4 w-4" />
+                {`Mark as ${targetStatus}`}
+              </>
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

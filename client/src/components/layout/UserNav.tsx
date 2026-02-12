@@ -16,13 +16,13 @@ export const LogoutButton = () => {
 
   return (
     <Button
-      variant="ghost"
+      variant="outline"
       size="sm"
       onClick={handleLogout}
-      className="text-red-500 hover:text-red-700 hover:bg-red-50 gap-2"
+      className="text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 gap-2"
     >
       <LogOut className="h-4 w-4" />
-      Logout
+      <span className="hidden sm:inline">Logout</span>
     </Button>
   );
 };

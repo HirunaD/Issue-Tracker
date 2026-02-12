@@ -32,7 +32,7 @@ export const IssueFilters = ({
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Select value={statusFilter} onValueChange={onStatusChange}>
-        <SelectTrigger className="w-[150px]">
+        <SelectTrigger className="w-37.5">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
@@ -45,7 +45,7 @@ export const IssueFilters = ({
       </Select>
 
       <Select value={priorityFilter} onValueChange={onPriorityChange}>
-        <SelectTrigger className="w-[150px]">
+        <SelectTrigger className="w-37.5">
           <SelectValue placeholder="Priority" />
         </SelectTrigger>
         <SelectContent>

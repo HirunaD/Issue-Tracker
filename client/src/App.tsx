@@ -10,37 +10,40 @@ import { Login } from "./features/auth/Login";
 import { IssueDashboard } from "./features/issues/IssueDashboard";
 import { useAuthStore } from "./features/auth/useAuthStore";
 import { Register } from "./features/auth/Register";
+import { ThemeProvider } from "./components/theme-provider";
 
 function App() {
   const { token } = useAuthStore();
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/login"
-          element={!token ? <Login /> : <Navigate to="/dashboard" />}
+    <ThemeProvider defaultTheme="system" storageKey="issue-tracker-theme">
+      <Router>
+        <Routes>
+          <Route
+            path="/login"
+            element={!token ? <Login /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/register"
+            element={!token ? <Register /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/dashboard"
+            element={token ? <IssueDashboard /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="*"
+            element={<Navigate to={token ? "/dashboard" : "/login"} />}
+          />
+        </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          theme="colored"
         />
-        <Route
-          path="/register"
-          element={!token ? <Register /> : <Navigate to="/dashboard" />}
-        />
-        <Route
-          path="/dashboard"
-          element={token ? <IssueDashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="*"
-          element={<Navigate to={token ? "/dashboard" : "/login"} />}
-        />
-      </Routes>
-      {/* Configuration for Toastify */}
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-      />
-    </Router>
+      </Router>
+    </ThemeProvider>
   );
 }
 

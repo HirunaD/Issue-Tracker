@@ -2,7 +2,7 @@ import { CreateIssueModal } from "./CreateIssueModal";
 import { useEffect, useState, useCallback } from "react";
 import { IssueTable } from "./IssueTable";
 import { useIssueStore } from "./useIssueStore";
-import { Search } from "lucide-react";
+import { Search, Bug, Loader2, FolderOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { LogoutButton } from "@/components/layout/UserNav";
@@ -10,6 +10,8 @@ import { StatusStats } from "./StatusStats";
 import { IssueFilters } from "./IssueFilters";
 import { Pagination } from "./Pagination";
 import { ExportButton } from "./ExportButton";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Card } from "@/components/ui/card";
 
 export const IssueDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,59 +59,97 @@ export const IssueDashboard = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight">Issue Management</h1>
-        <div className="flex items-center gap-2">
-          <ExportButton issues={issues} />
-          <CreateIssueModal />
-          <LogoutButton />
-        </div>
-      </div>
+      <header className="sticky top-0 z-40 glass border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between gap-4">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <Bug className="h-6 w-6 text-primary" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="font-bold text-lg">Issue Tracker</h1>
+                <p className="text-xs text-muted-foreground">Manage your projects</p>
+              </div>
+            </div>
 
-      {/* Status Stats Cards */}
-      <StatusStats stats={stats} />
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <ExportButton issues={issues} />
+              <CreateIssueModal />
+              <ThemeToggle />
+              <LogoutButton />
+            </div>
+          </div>
+        </div>
+      </header>
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by title..."
-            className="pl-8"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
+      {/* Main Content */}
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Page Title */}
+        <div className="space-y-1">
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+          <p className="text-muted-foreground">Monitor and manage all your issues in one place</p>
         </div>
-        <IssueFilters
-          statusFilter={statusFilter}
-          priorityFilter={priorityFilter}
-          onStatusChange={handleStatusChange}
-          onPriorityChange={handlePriorityChange}
-          onClearFilters={handleClearFilters}
-        />
-      </div>
 
-      {/* Issues Table */}
-      {loading ? (
-        <div className="text-center py-10 text-muted-foreground">
-          Updating list...
-        </div>
-      ) : issues.length === 0 ? (
-        <div className="text-center py-10 text-muted-foreground">
-          No issues found. Try adjusting your search or filters.
-        </div>
-      ) : (
-        <>
-          <IssueTable issues={issues} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
-        </>
-      )}
+        {/* Status Stats Cards */}
+        <StatusStats stats={stats} />
+
+        {/* Search and Filters Card */}
+        <Card className="p-4 glass-card border-0">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search issues by title..."
+                className="pl-10 h-10 bg-background/50"
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
+            <IssueFilters
+              statusFilter={statusFilter}
+              priorityFilter={priorityFilter}
+              onStatusChange={handleStatusChange}
+              onPriorityChange={handlePriorityChange}
+              onClearFilters={handleClearFilters}
+            />
+          </div>
+        </Card>
+
+        {/* Issues Table */}
+        {loading ? (
+          <Card className="p-12 glass-card border-0">
+            <div className="flex flex-col items-center justify-center gap-4 text-muted-foreground">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p>Loading issues...</p>
+            </div>
+          </Card>
+        ) : issues.length === 0 ? (
+          <Card className="p-12 glass-card border-0">
+            <div className="flex flex-col items-center justify-center gap-4 text-muted-foreground">
+              <div className="p-4 bg-muted rounded-full">
+                <FolderOpen className="h-8 w-8" />
+              </div>
+              <div className="text-center">
+                <p className="font-medium">No issues found</p>
+                <p className="text-sm">Try adjusting your search or filters</p>
+              </div>
+            </div>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            <IssueTable issues={issues} />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </div>
+        )}
+      </main>
     </div>
   );
 };

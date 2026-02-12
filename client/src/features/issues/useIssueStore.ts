@@ -2,17 +2,27 @@ import { create } from "zustand";
 import type { IssueState } from "@/types";
 import api from "@/lib/axios";
 
+interface FetchParams {
+  search?: string;
+  status?: string;
+  priority?: string;
+  page?: number;
+}
 
+interface ExtendedIssueState extends IssueState {
+  lastFetchParams: FetchParams;
+}
 
-export const useIssueStore = create<IssueState>((set) => ({
+export const useIssueStore = create<ExtendedIssueState>((set, get) => ({
   issues: [],
   stats: [],
   loading: false,
   totalPages: 1,
   currentPage: 1,
+  lastFetchParams: {},
 
   fetchIssues: async (params) => {
-    set({ loading: true });
+    set({ loading: true, lastFetchParams: params });
     try {
       const response = await api.get("/issues", { params });
 
@@ -32,15 +42,10 @@ export const useIssueStore = create<IssueState>((set) => ({
   createIssue: async (issueData) => {
     set({ loading: true });
     try {
-      const res = await api.post("/issues", issueData);
-
-      set((state) => ({
-        issues: [
-          ...(Array.isArray(state.issues) ? state.issues : []),
-          res.data,
-        ],
-        loading: false,
-      }));
+      await api.post("/issues", issueData);
+      // Refetch to update stats and list
+      const { lastFetchParams } = get();
+      await get().fetchIssues({ ...lastFetchParams, page: 1 });
     } catch (err) {
       set({ loading: false });
       throw err;
@@ -49,10 +54,10 @@ export const useIssueStore = create<IssueState>((set) => ({
 
   updateIssue: async (id, updates) => {
     try {
-      const response = await api.patch(`/issues/${id}`, updates);
-      set((state) => ({
-        issues: state.issues.map((i) => (i._id === id ? response.data : i)),
-      }));
+      await api.patch(`/issues/${id}`, updates);
+      // Refetch to update stats and list
+      const { lastFetchParams } = get();
+      await get().fetchIssues(lastFetchParams);
     } catch (err) {
       console.error("Update failed:", err);
       throw err;
@@ -62,9 +67,9 @@ export const useIssueStore = create<IssueState>((set) => ({
   deleteIssue: async (id) => {
     try {
       await api.delete(`/issues/${id}`);
-      set((state) => ({
-        issues: state.issues.filter((i) => i._id !== id),
-      }));
+      // Refetch to update stats and list
+      const { lastFetchParams } = get();
+      await get().fetchIssues(lastFetchParams);
     } catch (err) {
       console.error("Delete failed:", err);
       throw err;

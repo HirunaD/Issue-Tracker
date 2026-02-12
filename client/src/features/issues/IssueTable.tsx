@@ -18,18 +18,23 @@ const priorityStyles: Record<Priority, string> = {
 };
 
 const statusStyles: Record<Status, string> = {
-  Open: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  "In Progress": "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-  Resolved: "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  Closed: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
+  Open: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800",
+  "In Progress":
+    "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800",
+  Resolved:
+    "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800",
+  Closed:
+    "bg-slate-200 text-slate-800 border-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700",
 };
 
 export const IssueTable = ({ issues }: { issues: Issue[] }) => {
   const formatDate = (date: string) => {
     const d = new Date(date);
     const now = new Date();
-    const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const diffDays = Math.floor(
+      (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays} days ago`;
@@ -53,18 +58,24 @@ export const IssueTable = ({ issues }: { issues: Issue[] }) => {
           {issues?.map((issue) => (
             <TableRow key={issue._id} className="hover:bg-muted/20">
               <TableCell className="max-w-xs">
-                <span className="font-medium truncate block">{issue.title}</span>
+                <span className="font-medium truncate block">
+                  {issue.title}
+                </span>
               </TableCell>
               <TableCell className="max-w-xs text-muted-foreground">
-                <span className="truncate block text-sm">{issue.description || "-"}</span>
+                <span className="truncate block text-sm">
+                  {issue.description || "-"}
+                </span>
               </TableCell>
               <TableCell>
-                <Badge variant="secondary" className={statusStyles[issue.status]}>
+                <Badge variant="outline" className={statusStyles[issue.status]}>
                   {issue.status}
                 </Badge>
               </TableCell>
               <TableCell>
-                <span className={`text-sm font-medium ${priorityStyles[issue.priority]}`}>
+                <span
+                  className={`text-sm font-medium ${priorityStyles[issue.priority]}`}
+                >
                   {issue.priority}
                 </span>
               </TableCell>

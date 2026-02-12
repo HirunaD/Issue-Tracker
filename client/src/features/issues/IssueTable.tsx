@@ -42,6 +42,7 @@ export const IssueTable = ({ issues }: { issues: Issue[] }) => {
         <TableHeader>
           <TableRow className="bg-muted/40">
             <TableHead>Issue</TableHead>
+            <TableHead>Description</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Created</TableHead>
@@ -53,6 +54,9 @@ export const IssueTable = ({ issues }: { issues: Issue[] }) => {
             <TableRow key={issue._id} className="hover:bg-muted/20">
               <TableCell className="max-w-xs">
                 <span className="font-medium truncate block">{issue.title}</span>
+              </TableCell>
+              <TableCell className="max-w-xs text-muted-foreground">
+                <span className="truncate block text-sm">{issue.description || "-"}</span>
               </TableCell>
               <TableCell>
                 <Badge variant="secondary" className={statusStyles[issue.status]}>

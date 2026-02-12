@@ -11,7 +11,7 @@ import {
 import { useIssueStore } from "./useIssueStore";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "@/lib/utils";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import type { Status } from "@/types";
 
@@ -22,32 +22,6 @@ interface QuickStatusModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const statusConfig: Record<"Resolved" | "Closed", { 
-  icon: React.ElementType; 
-  iconBg: string;
-  iconColor: string;
-  buttonColor: string;
-  title: string; 
-  description: string 
-}> = {
-  Resolved: {
-    icon: CheckCircle2,
-    iconBg: "bg-emerald-500/10",
-    iconColor: "text-emerald-600 dark:text-emerald-400",
-    buttonColor: "bg-emerald-600 hover:bg-emerald-700",
-    title: "Mark as Resolved",
-    description: "This will mark the issue as resolved, indicating that the problem has been fixed and verified.",
-  },
-  Closed: {
-    icon: XCircle,
-    iconBg: "bg-slate-500/10",
-    iconColor: "text-slate-600 dark:text-slate-400",
-    buttonColor: "bg-slate-600 hover:bg-slate-700",
-    title: "Close Issue",
-    description: "This will close the issue. Closed issues are typically ones that won't be addressed further.",
-  },
-};
-
 export const QuickStatusModal = ({
   id,
   targetStatus,
@@ -57,14 +31,11 @@ export const QuickStatusModal = ({
   const updateIssue = useIssueStore((state) => state.updateIssue);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const config = statusConfig[targetStatus];
-  const Icon = config.icon;
-
   const handleUpdate = async () => {
     setIsUpdating(true);
     try {
       await updateIssue(id, { status: targetStatus as Status });
-      toast.success(`Issue marked as ${targetStatus}`);
+      toast.success(`Marked as ${targetStatus}`);
       onOpenChange(false);
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -77,39 +48,24 @@ export const QuickStatusModal = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className={`p-2.5 ${config.iconBg} rounded-xl`}>
-              <Icon className={`h-5 w-5 ${config.iconColor}`} />
-            </div>
-            <div>
-              <AlertDialogTitle className="text-xl">{config.title}</AlertDialogTitle>
-            </div>
-          </div>
-          <AlertDialogDescription className="text-base">
-            {config.description}
+          <AlertDialogTitle>Mark as {targetStatus}?</AlertDialogTitle>
+          <AlertDialogDescription>
+            {targetStatus === "Resolved" 
+              ? "This marks the issue as fixed." 
+              : "This closes the issue."}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="mt-4">
+        <AlertDialogFooter>
           <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
               handleUpdate();
             }}
-            className={config.buttonColor}
+            className={targetStatus === "Resolved" ? "bg-green-600 hover:bg-green-700" : ""}
             disabled={isUpdating}
           >
-            {isUpdating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              <>
-                <Icon className="mr-2 h-4 w-4" />
-                {`Mark as ${targetStatus}`}
-              </>
-            )}
+            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
